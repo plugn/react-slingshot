@@ -1,6 +1,5 @@
 import React from 'react';
-import {shallow} from 'enzyme';
-import {expect} from 'chai';
+import { shallow } from 'enzyme';
 import FuelSavingsResults from './FuelSavingsResults';
 
 describe('<FuelSavingsResults />', () => {
@@ -13,10 +12,8 @@ describe('<FuelSavingsResults />', () => {
 
     const wrapper = shallow(<FuelSavingsResults savings={savings}/>);
     // console.log(wrapper.debug()); // View shallowly rendered component
-    const actual = wrapper.find('.fuel-savings-label').text();
-    const expected = 'Savings';
-
-    expect(actual).to.equal(expected);
+    const savingsLabelText = wrapper.find('.fuel-savings-label').text();
+    expect(savingsLabelText).toEqual('Savings');
   });
 
   it('should give values a \'savings\' class when savings exist', () => {
@@ -27,11 +24,8 @@ describe('<FuelSavingsResults />', () => {
     };
 
     const wrapper = shallow(<FuelSavingsResults savings={savings}/>);
-
-    const actual = wrapper.find('.savings').length;
-    const expected = 3;
-
-    expect(actual).to.equal(expected);
+    const numObjectsWithSavingsClass = wrapper.find('.savings').length;
+    expect(numObjectsWithSavingsClass).toEqual(3);
   });
 
   it('should display loss when savings don\'t exist', () => {
@@ -42,11 +36,8 @@ describe('<FuelSavingsResults />', () => {
     };
 
     const wrapper = shallow(<FuelSavingsResults savings={savings}/>);
-
-    const actual = wrapper.find('.fuel-savings-label').text();
-    const expected = 'Loss';
-
-    expect(actual).to.equal(expected);
+    const labelText = wrapper.find('.fuel-savings-label').text();
+    expect(labelText).toEqual('Loss');
   });
 
   it('should give values a \'loss\' class when savings don\'t exist', () => {
@@ -57,9 +48,7 @@ describe('<FuelSavingsResults />', () => {
     };
 
     const wrapper = shallow(<FuelSavingsResults savings={savings}/>);
-    const actual = wrapper.find('.loss').length;
-    const expected = 3;
-
-    expect(actual).to.equal(expected);
+    const numObjectsWithLossClass = wrapper.find('.loss').length;
+    expect(numObjectsWithLossClass).toEqual(3);
   });
 });

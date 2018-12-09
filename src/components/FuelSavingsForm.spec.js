@@ -1,268 +1,169 @@
 import React from 'react';
-import {shallow} from 'enzyme';
-import {expect} from 'chai';
-import sinon from 'sinon';
+import { shallow } from 'enzyme';
 import FuelSavingsForm from './FuelSavingsForm';
 import FuelSavingsTextInput from './FuelSavingsTextInput';
 import FuelSavingsResults from './FuelSavingsResults';
 
+/* Object builder. Could use test data builder pattern too.
+   More info: http://blog.codeleak.pl/2014/06/test-data-builders-and-object-mother.html
+   Returns fuel savings object. Overrides default values
+   for any properties sent in on args object.
+   Example: To get a fuel savings object like the
+   default below, but with newMpg set to 10, call with
+   getFuelSavings({ newMpg: 10});
+*/
+function getFuelSavings(args) {
+  const defaultFuelSavings = {
+    newMpg: 20,
+    tradeMpg: 10,
+    newPpg: 1.50,
+    tradePpg: 1.50,
+    milesDriven: 100,
+    milesDrivenTimeframe: 'week',
+    displayResults: false,
+    dateModified: null,
+    necessaryDataIsProvidedToCalculateSavings: false,
+    savings: {
+      monthly: 0,
+      annual: 0,
+      threeYear: 0
+    }
+  };
+
+  return {
+    ...defaultFuelSavings,
+    ...args
+  };
+}
+
 describe('<FuelSavingsForm />', () => {
   it('should contain <FuelSavingsTextInput /> components', () => {
-    const saveFuelSavings = () => {};
-    const calculateFuelSavings = () => {};
-    const fuelSavings = {
-      newMpg: 20,
-      tradeMpg: 10,
-      newPpg: 1.50,
-      tradePpg: 1.50,
-      milesDriven: 100,
-      milesDrivenTimeframe: 'week',
-      displayResults: false,
-      dateModified: null,
-      necessaryDataIsProvidedToCalculateSavings: false,
-      savings: {
-        monthly: 0,
-        annual: 0,
-        threeYear: 0
-      }
-    };
-
+    const fuelSavings = getFuelSavings();
     const wrapper = shallow(<FuelSavingsForm
-      saveFuelSavings={saveFuelSavings}
-      calculateFuelSavings={calculateFuelSavings}
+      onSaveClick={jest.fn()}
+      onChange={jest.fn()}
       fuelSavings={fuelSavings}
     />);
     const allInputs = wrapper.find(FuelSavingsTextInput);
 
-    expect(allInputs).to.be.length(5);
-    expect(allInputs.at(0).props().name).to.equal('newMpg');
-    expect(allInputs.at(0).props().value).to.equal(fuelSavings.newMpg);
-    expect(allInputs.at(1).props().name).to.equal('tradeMpg');
-    expect(allInputs.at(1).props().value).to.equal(fuelSavings.tradeMpg);
-    expect(allInputs.at(2).props().name).to.equal('newPpg');
-    expect(allInputs.at(2).props().value).to.equal(fuelSavings.newPpg);
-    expect(allInputs.at(3).props().name).to.equal('tradePpg');
-    expect(allInputs.at(3).props().value).to.equal(fuelSavings.tradePpg);
-    expect(allInputs.at(4).props().name).to.equal('milesDriven');
-    expect(allInputs.at(4).props().value).to.equal(fuelSavings.milesDriven);
+    expect(allInputs.length).toEqual(5);
+    expect(allInputs.at(0).props().name).toEqual('newMpg');
+    expect(allInputs.at(0).props().value).toEqual(fuelSavings.newMpg);
+    expect(allInputs.at(1).props().name).toEqual('tradeMpg');
+    expect(allInputs.at(1).props().value).toEqual(fuelSavings.tradeMpg);
+    expect(allInputs.at(2).props().name).toEqual('newPpg');
+    expect(allInputs.at(2).props().value).toEqual(fuelSavings.newPpg);
+    expect(allInputs.at(3).props().name).toEqual('tradePpg');
+    expect(allInputs.at(3).props().value).toEqual(fuelSavings.tradePpg);
+    expect(allInputs.at(4).props().name).toEqual('milesDriven');
+    expect(allInputs.at(4).props().value).toEqual(fuelSavings.milesDriven);
   });
 
   it('should contain options to change miles driven timeframe', () => {
-    const saveFuelSavings = () => {};
-    const calculateFuelSavings = () => {};
-    const fuelSavings = {
-      newMpg: 20,
-      tradeMpg: 10,
-      newPpg: 1.50,
-      tradePpg: 1.50,
-      milesDriven: 100,
-      milesDrivenTimeframe: 'week',
-      displayResults: false,
-      dateModified: null,
-      necessaryDataIsProvidedToCalculateSavings: false,
-      savings: {
-        monthly: 0,
-        annual: 0,
-        threeYear: 0
-      }
-    };
-
     const wrapper = shallow(<FuelSavingsForm
-      saveFuelSavings={saveFuelSavings}
-      calculateFuelSavings={calculateFuelSavings}
-      fuelSavings={fuelSavings}
+      onSaveClick={jest.fn()}
+      onChange={jest.fn()}
+      fuelSavings={getFuelSavings()}
     />);
     const expectedOption1 = '<option value="week">Week</option>';
     const expectedOption2 = '<option value="month">Month</option>';
     const expectedOption3 = '<option value="year">Year</option>';
 
-    expect(wrapper.find('select').childAt(0).html()).to.equal(expectedOption1);
-    expect(wrapper.find('select').childAt(1).html()).to.equal(expectedOption2);
-    expect(wrapper.find('select').childAt(2).html()).to.equal(expectedOption3);
+    expect(wrapper.find('select').childAt(0).html()).toEqual(expectedOption1);
+    expect(wrapper.find('select').childAt(1).html()).toEqual(expectedOption2);
+    expect(wrapper.find('select').childAt(2).html()).toEqual(expectedOption3);
   });
 
   it('should contain <FuelSavingsResults /> when necessary conditions are met', () => {
-    const saveFuelSavings = () => {};
-    const calculateFuelSavings = () => {};
-    const fuelSavings = {
-      newMpg: 20,
-      tradeMpg: 10,
-      newPpg: 1.50,
-      tradePpg: 1.50,
-      milesDriven: 100,
-      milesDrivenTimeframe: 'week',
-      displayResults: false,
-      dateModified: null,
+    const fuelSavings = getFuelSavings({
       necessaryDataIsProvidedToCalculateSavings: true,
       savings: {
         monthly: 10,
         annual: 120,
         threeYear: 360
       }
-    };
+    });
 
     const wrapper = shallow(<FuelSavingsForm
-      saveFuelSavings={saveFuelSavings}
-      calculateFuelSavings={calculateFuelSavings}
+      onSaveClick={jest.fn()}
+      onChange={jest.fn()}
       fuelSavings={fuelSavings}
     />);
-    const expected = <FuelSavingsResults savings={fuelSavings.savings}/>;
+    const expected = <FuelSavingsResults savings={fuelSavings.savings} />;
 
-    expect(wrapper.contains(expected)).to.be.true;
+    expect(wrapper.contains(expected)).toBeTruthy();
   });
 
   it('should not contain <FuelSavingsResults /> when necessary conditions are not met', () => {
-    const saveFuelSavings = () => {};
-    const calculateFuelSavings = () => {};
-    const fuelSavings = {
-      newMpg: 20,
-      tradeMpg: 10,
-      newPpg: 1.50,
-      tradePpg: 1.50,
-      milesDriven: 100,
-      milesDrivenTimeframe: 'week',
-      displayResults: false,
-      dateModified: null,
-      necessaryDataIsProvidedToCalculateSavings: false,
-      savings: {
-        monthly: 0,
-        annual: 0,
-        threeYear: 0
-      }
-    };
-
+    const fuelSavings = getFuelSavings();
     const wrapper = shallow(<FuelSavingsForm
-      saveFuelSavings={saveFuelSavings}
-      calculateFuelSavings={calculateFuelSavings}
+      onSaveClick={jest.fn()}
+      onChange={jest.fn()}
       fuelSavings={fuelSavings}
     />);
-    const expected = <FuelSavingsResults savings={fuelSavings.savings}/>;
+    const expected = <FuelSavingsResults savings={fuelSavings.savings} />;
 
-    expect(wrapper.contains(expected)).to.be.false;
+    expect(wrapper.contains(expected)).toBeFalsy();
   });
 
-  it('should handle form submit', () => {
-    const saveFuelSavings = sinon.spy();
-    const calculateFuelSavings = () => {};
-    const fuelSavings = {
-      newMpg: 20,
-      tradeMpg: 10,
-      newPpg: 1.50,
-      tradePpg: 1.50,
-      milesDriven: 100,
-      milesDrivenTimeframe: 'week',
-      displayResults: false,
-      dateModified: null,
-      necessaryDataIsProvidedToCalculateSavings: false,
-      savings: {
-        monthly: 0,
-        annual: 0,
-        threeYear: 0
-      }
-    };
-
+  it('should handle save button click', () => {
+    const onSaveClick = jest.fn();
     const wrapper = shallow(<FuelSavingsForm
-      saveFuelSavings={saveFuelSavings}
-      calculateFuelSavings={calculateFuelSavings}
-      fuelSavings={fuelSavings}
+      onSaveClick={onSaveClick}
+      onChange={jest.fn()}
+      fuelSavings={getFuelSavings()}
     />);
 
-    expect(saveFuelSavings.calledOnce).to.be.false;
+    expect(onSaveClick).not.toBeCalled();
     wrapper.find('input[type="submit"]').simulate('click');
-    expect(saveFuelSavings.calledOnce).to.be.true;
+    expect(onSaveClick).toBeCalled();
   });
 
   it('should submit appState', () => {
-    const saveFuelSavings = sinon.spy();
-    const calculateFuelSavings = () => {};
-    const fuelSavings = {
-      newMpg: 20,
-      tradeMpg: 10,
-      newPpg: 1.50,
-      tradePpg: 1.50,
-      milesDriven: 100,
-      milesDrivenTimeframe: 'week',
-      displayResults: false,
-      dateModified: null,
-      necessaryDataIsProvidedToCalculateSavings: false,
-      savings: {
-        monthly: 0,
-        annual: 0,
-        threeYear: 0
-      }
-    };
-
+    const fuelSavings = getFuelSavings();
+    const onSaveClick = jest.fn();
     const wrapper = shallow(<FuelSavingsForm
-      saveFuelSavings={saveFuelSavings}
-      calculateFuelSavings={calculateFuelSavings}
+      onSaveClick={onSaveClick}
+      onChange={jest.fn()}
       fuelSavings={fuelSavings}
     />);
 
+    expect(onSaveClick).not.toBeCalled();
     wrapper.find('input[type="submit"]').simulate('click');
-    expect(saveFuelSavings.args[0][0]).to.equal(fuelSavings);
+    expect(onSaveClick).toBeCalled();
   });
 
 
-  it('should calculate fuel savings on text input change', () => {
-    const saveFuelSavings = () => {};
-    const calculateFuelSavings = sinon.spy();
-    const fuelSavings = {
-      newMpg: 20,
-      tradeMpg: 10,
-      newPpg: 1.50,
-      tradePpg: 1.50,
-      milesDriven: 100,
-      milesDrivenTimeframe: 'week',
-      displayResults: false,
-      dateModified: null,
-      necessaryDataIsProvidedToCalculateSavings: false,
-      savings: {
-        monthly: 0,
-        annual: 0,
-        threeYear: 0
-      }
-    };
+  it('should call onChange when text input changes', () => {
+    const onChange = jest.fn();
 
     const wrapper = shallow(<FuelSavingsForm
-      saveFuelSavings={saveFuelSavings}
-      calculateFuelSavings={calculateFuelSavings}
-      fuelSavings={fuelSavings}
+      onSaveClick={jest.fn()}
+      onChange={onChange}
+      fuelSavings={getFuelSavings()}
     />);
 
-    expect(calculateFuelSavings.calledOnce).to.be.false;
-    wrapper.find(FuelSavingsTextInput).first().simulate('change');
-    expect(calculateFuelSavings.calledOnce).to.be.true;
+    const changeEvent = { target: { name: 'newMpg', value: '20' } };
+
+    expect(onChange).not.toBeCalled();
+    wrapper.find(FuelSavingsTextInput).first().simulate('change', changeEvent);
+    expect(onChange).toBeCalledWith(changeEvent);
   });
 
-  it('should calculate fuel savings on miles driven timeframe change', () => {
-    const saveFuelSavings = () => {};
-    const calculateFuelSavings = sinon.spy();
-    const fuelSavings = {
-      newMpg: 20,
-      tradeMpg: 10,
-      newPpg: 1.50,
-      tradePpg: 1.50,
-      milesDriven: 100,
-      milesDrivenTimeframe: 'week',
-      displayResults: false,
-      dateModified: null,
-      necessaryDataIsProvidedToCalculateSavings: false,
-      savings: {
-        monthly: 0,
-        annual: 0,
-        threeYear: 0
-      }
-    };
+  it('should call onChange when timeframe changes', () => {
+    const onChange = jest.fn();
+    const fuelSavings = getFuelSavings();
 
     const wrapper = shallow(<FuelSavingsForm
-      saveFuelSavings={saveFuelSavings}
-      calculateFuelSavings={calculateFuelSavings}
+      onSaveClick={jest.fn()}
+      onChange={onChange}
       fuelSavings={fuelSavings}
     />);
 
-    expect(calculateFuelSavings.calledOnce).to.be.false;
-    wrapper.find('select').simulate('change', {target: {value: 'year'}});
-    expect(calculateFuelSavings.calledOnce).to.be.true;
-    expect(calculateFuelSavings.args[0][2]).to.equal('year');
+    const changeEvent = { target: { name: 'timeframe', value: 'year' } };
+
+    expect(onChange).not.toBeCalled();
+    wrapper.find('select').simulate('change', changeEvent);
+    expect(onChange).toBeCalledWith(changeEvent);
   });
 });
